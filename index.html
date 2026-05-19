@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>您的專屬座位導覽</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        #header {
+            background-color: #0056b3;
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 20px;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 地圖容器 */
+        .map-container {
+            position: relative;
+            max-width: 100%;
+            margin-top: 10px;
+        }
+
+        .map-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* 發光閃爍的紅圈圈 */
+        .glow-marker {
+            position: absolute;
+            width: 35px;       
+            height: 35px;
+            background-color: rgba(255, 0, 0, 0.4);
+            border: 3px solid #ff0000;
+            border-radius: 50%;
+            display: none;     
+            transform: translate(-50%, -50%); 
+            z-index: 10;
+            animation: blinker 1.2s linear infinite;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.4);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header">您的會場座位在：<span id="table-title">載入中...</span></div>
+
+    <div class="map-container" id="mapWrapper">
+        <img src="seat.png" alt="會場座位圖" id="seatMap">
+        
+        <div id="marker" class="glow-marker"></div>
+    </div>
+
+    <script>
+        // 🛠️ 56 桌的座標放置處
+        // 測試時，在網頁畫面上用滑鼠點擊對應桌子，就會跳出正確的 left 和 top
+        const tablePositions = {
+            "A-1": { left: "42.5%", top: "21.3%" }, // 這邊只是範例
+            "A-2": { left: "51.2%", top: "21.3%" }, 
+            "A-3": { left: "59.8%", top: "21.3%" }, 
+            // ... 請依此類推，在測試完畢後把 56 桌的數字填進來
+        };
+
+        // 自動抓取網址參數 (例如 ?table=A-3)
+        const urlParams = new URLSearchParams(window.location.search);
+        const myTable = urlParams.get('table');
+
+        const titleElement = document.getElementById('table-title');
+        const marker = document.getElementById('marker');
+
+        if (myTable && tablePositions[myTable]) {
+            titleElement.innerText = myTable;
+            marker.style.left = tablePositions[myTable].left;
+            marker.style.top = tablePositions[myTable].top;
+            marker.style.display = "block"; 
+        } else {
+            titleElement.innerText = myTable ? myTable + " (座標尚未設定)" : "請由LINE報到連結進入";
+            marker.style.display = "none";
+        }
+
+        // 💡 貼心小工具：滑鼠點擊圖片直接抓座標，幫你省去量尺寸的時間
+        document.getElementById('mapWrapper').addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+            const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+            
+            // 會在你的電腦瀏覽器跳出 alert 視窗，直接複製即可
+            alert(`請複製這行到程式碼中：\n"桌號": { left: "${x}%", top: "${y}%" },`);
+        });
+    </script>
+</body>
+</html>
