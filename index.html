@@ -45,8 +45,8 @@
         /* 發光閃爍的紅圈圈 */
         .glow-marker {
             position: absolute;
-            width: 25px;       
-            height: 25px;
+            width: 20px;       
+            height: 20px;
             background-color: rgba(255, 0, 0, 0.4);
             border: 3px solid #ff0000;
             border-radius: 50%;
@@ -282,7 +282,7 @@
             const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
             
             // 會在你的電腦瀏覽器跳出 alert 視窗，直接複製即可
-            alert(`請複製這行到程式碼中：\n"桌號": { left: "${x}%", top: "${y}%" },`);
+              // alert(`請複製這行到程式碼中：\n"桌號": { left: "${x}%", top: "${y}%" },`);
         });
     </script>
 </body>
